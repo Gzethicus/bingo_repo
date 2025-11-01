@@ -1,0 +1,3 @@
+[submodule "bingovista"]
+	path = bingovista
+	url = https://github.com/T3sl4co1l/bingovista.git

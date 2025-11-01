@@ -1,0 +1,48 @@
+* {
+    font-family: "Rodondo";
+}
+
+body {
+    background-color: #080808;
+}
+
+.board-info {
+    display: flex;
+    flex-direction:column;
+    margin: 30px;
+    width: 100%;
+    align-items: center;
+}
+
+.board-name {
+    color: white;
+    text-align: center;
+    font-size: 50pt;
+}
+
+.board-shelter {
+    color: white;
+    text-align: center;
+    font-size: 16pt;
+}
+
+#copy-confirm {
+    font-size: 30pt;
+    color: #20b020;
+    visibility: hidden;
+    position: absolute;
+    animation-duration: 3s;
+    animation-name: fade-out;
+}
+
+@keyframes fade-out {
+    0% {
+        translate: 0 0;
+        opacity: 1;
+    }
+
+    100% {
+        translate: 0 -20px;
+        opacity: 0;
+    }
+}
