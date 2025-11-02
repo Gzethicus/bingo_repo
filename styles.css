@@ -11,11 +11,19 @@ body {
     background-color: #080808;
 }
 
+#board-list {
+    position: absolute;
+    top: 10px;
+    left: 300px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
 .board-info {
     display: flex;
-    flex-direction:column;
-    margin: 30px;
-    width: 100%;
+    flex-direction: column;
+    margin: 0px 0px 30px 0px;
     align-items: center;
 }
 
@@ -31,11 +39,40 @@ body {
     font-size: 16pt;
 }
 
+.board-info canvas {
+    cursor: copy;
+}
+
+#navigation {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    width: 256px;
+    border: 2px solid #d0d0d0;
+    padding: 10px;
+    background-color: #080808;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#navigation a {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16pt;
+}
+#navigation a:hover {
+    color: #0078f0;
+}
+
 #copy-confirm {
     font-size: 30pt;
     color: #20b020;
     visibility: hidden;
     position: absolute;
+    z-index: 100;
+    pointer-events: none;
     animation-duration: 3s;
     animation-name: fade-out;
 }

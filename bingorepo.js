@@ -17,7 +17,12 @@ function createBoardInfo(name) {
     const newDiv = document.createElement("div");
     newDiv.className = "board-info";
     newDiv.id = name;
-    document.body.appendChild(newDiv);
+    document.getElementById("board-list").appendChild(newDiv);
+
+    const link = document.createElement("a");
+    link.href = "#" + name;
+    link.appendChild(document.createTextNode(name));
+    document.getElementById("navigation").appendChild(link);
 }
 
 function displayBoardInfo(data) {
