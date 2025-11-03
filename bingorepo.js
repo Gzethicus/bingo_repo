@@ -4,11 +4,11 @@ const canvasSize = "454";
 
 document.addEventListener("DOMContentLoaded", async function() {
     const copyConfirm = document.getElementById("copy-confirm");
-    copyConfirm.addEventListener("animationend", function () {copyConfirm.style.visibility = "hidden";})
+    copyConfirm.addEventListener("animationend", function () {copyConfirm.style.visibility = "hidden";});
 
     const boardList = await fetch(dbUrl + "?board=0").then(response => response.json());
     for (i = 0; i < boardList.length; i++) {
-        createBoardInfo(boardList[i])
+        createBoardInfo(boardList[i]);
         fetch(dbUrl + "?board=" + (i + 1)).then(response => response.json()).then(displayBoardInfo);
     }
 });
@@ -21,12 +21,21 @@ function createBoardInfo(name) {
 
     const link = document.createElement("a");
     link.href = "#" + name;
+    link.id = name + "-link";
     link.appendChild(document.createTextNode(name));
     document.getElementById("navigation").appendChild(link);
 }
 
 function displayBoardInfo(data) {
     const infoDiv = document.getElementById(data.name);
+    const divLink = document.getElementById(data.name + "-link");
+    if (data.used) {
+        infoDiv.classList.add("used");
+        divLink.classList.add("used");
+    } else {
+        infoDiv.classList.remove("used");
+        divLink.classList.remove("used");
+    }
 
     const infoName = document.createElement("label");
     infoName.className = "board-name";
@@ -43,9 +52,9 @@ function displayBoardInfo(data) {
     infoCanvas.width = canvasSize;
     infoCanvas.height = canvasSize;
     infoCanvas.appendChild(document.createTextNode(data.string));
-    infoCanvas.addEventListener("click", onCanvasClicked)
+    infoCanvas.addEventListener("click", onCanvasClicked);
     infoDiv.appendChild(infoCanvas);
-    drawBoard(infoCanvas.id, data.string)
+    drawBoard(infoCanvas.id, data.string);
 }
 
 function drawBoard(canvasId, boardString) {
@@ -55,7 +64,7 @@ function drawBoard(canvasId, boardString) {
 }
 
 function onCanvasClicked(e) {
-    const callback = confirmCopyToClipboard.bind(this, e)
+    const callback = confirmCopyToClipboard.bind(this, e);
     navigator.clipboard.writeText(e.target.textContent).then(callback);
 }
 
