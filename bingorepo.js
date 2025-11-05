@@ -41,6 +41,8 @@ function displayBoardInfo(data) {
         divLink.classList.remove("used");
     }
 
+    var board = parseBoard(data.string);
+
     const infoName = document.createElement("label");
     infoName.className = "board-name";
     infoName.appendChild(document.createTextNode(data.name));
@@ -60,13 +62,8 @@ function displayBoardInfo(data) {
     infoCanvas.appendChild(document.createTextNode(data.string));
     infoCanvas.addEventListener("click", onCanvasClicked);
     infoDiv.appendChild(infoCanvas);
-    drawBoard(infoCanvas.id, data.string);
-}
 
-function drawBoard(canvasId, boardString) {
-	document.getElementById("textbox").value = boardString;
-    parseText();
-    redrawBoard(canvasId);
+    redrawBoard(infoCanvas.id, board);
 }
 
 function onCanvasClicked(e) {
