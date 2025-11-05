@@ -1,0 +1,39 @@
+@font-face {
+    font-family: "Rodondo";
+    src: url(..\\bingovista\\Rodondo.otf) format("OpenType");
+}
+
+* {
+    font-family: "Rodondo";
+}
+
+body {
+    background-color: #080808;
+}
+
+.used {
+    display: none;
+}
+
+#copy-confirm {
+    font-size: 30pt;
+    color: #20b020;
+    visibility: hidden;
+    position: absolute;
+    z-index: 100;
+    pointer-events: none;
+    animation-duration: 3s;
+    animation-name: fade-out;
+}
+
+@keyframes fade-out {
+    0% {
+        translate: 0 0;
+        opacity: 1;
+    }
+
+    100% {
+        translate: 0 -20px;
+        opacity: 0;
+    }
+}

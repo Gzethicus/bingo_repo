@@ -1,15 +1,17 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbxDRSVpPLWVR3Yzf3dmfTJ2a42ETasB4JisCcnczAzw9w2c5eUeddK17iKldUdiG62xqQ/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbxDRhfclsaQGBR-xFMQWapvZetM8BlN089vlswhYu1AEFWONGVq53ap-eDehMNvIBKuuw/exec";
 const canvasSize = "454";
 
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const copyConfirm = document.getElementById("copy-confirm");
-    copyConfirm.addEventListener("animationend", function () {copyConfirm.style.visibility = "hidden";});
+    var reqUrl = new URL(dbUrl);
+    reqUrl.search = "character=Watcher";
+    const boardList = await fetch(reqUrl).then(response => response.json());
 
-    const boardList = await fetch(dbUrl + "?board=0").then(response => response.json());
-    for (i = 0; i < boardList.length; i++) {
-        createBoardInfo(boardList[i]);
-        fetch(dbUrl + "?board=" + (i + 1)).then(response => response.json()).then(displayBoardInfo);
+    if (document.getElementById("board-info") !== undefined && document.getElementById("navigation") !== undefined) {
+        for (i = 0; i < boardList.length; i++) {
+            createBoardInfo(boardList[i].name);
+            displayBoardInfo(boardList[i]);
+        }
     }
 });
 
@@ -75,4 +77,27 @@ function confirmCopyToClipboard(e) {
     confirm.style.top = e.pageY - confirm.offsetHeight + "px";
     confirm.style.visibility = "visible";
     confirm.style.animation = null;
+}
+
+function toggleUsedVisibility(e) {
+    const visible = e.target.checked;
+    var styleSheet;
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        var sheet = document.styleSheets[i];
+        if (sheet.href.endsWith("/styles.css")) {
+            styleSheet = sheet;
+            break;
+        }
+    }
+
+    for (var i = 0; i < styleSheet.cssRules.length; i++) {
+        var rule = styleSheet.cssRules[i];
+        if (rule.selectorText === ".used") {
+            if (visible)
+                rule.style.removeProperty("display");
+            else
+                rule.style.display = "none"
+            break;
+        }
+    }
 }
