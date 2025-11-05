@@ -1,3 +1,7 @@
+body {
+    --canvas-size: 454px;
+}
+
 #board-list {
     position: absolute;
     top: 10px;
@@ -28,6 +32,6 @@
 
 .board-info canvas {
     cursor: copy;
-    width: 454px;
-    height: 454px
+    width: var(--canvas-size);
+    height: var(--canvas-size);
 }

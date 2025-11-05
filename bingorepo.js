@@ -1,8 +1,10 @@
 const dbUrl = "https://script.google.com/macros/s/AKfycbxDRhfclsaQGBR-xFMQWapvZetM8BlN089vlswhYu1AEFWONGVq53ap-eDehMNvIBKuuw/exec";
-const canvasSize = "454";
+var canvasSize = 0;
 
 
 document.addEventListener("DOMContentLoaded", async function() {
+    canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
+
     var reqUrl = new URL(dbUrl);
     reqUrl.search = "character=Watcher";
     const boardList = await fetch(reqUrl).then(response => response.json());
@@ -44,10 +46,12 @@ function displayBoardInfo(data) {
     infoName.appendChild(document.createTextNode(data.name));
     infoDiv.appendChild(infoName);
 
+    const extraControls = document.createElement("div");
     const infoShelter = document.createElement("label");
     infoShelter.className = "board-shelter";
     infoShelter.appendChild(document.createTextNode(data.shelter));
-    infoDiv.appendChild(infoShelter);
+    extraControls.appendChild(infoShelter);
+    infoDiv.appendChild(extraControls);
 
     const infoCanvas = document.createElement("canvas");
     infoCanvas.id = data.name + "-canvas";

@@ -42,4 +42,5 @@
 
 #controls label {
     flex-grow: 1;
+    user-select: none;
 }
