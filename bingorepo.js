@@ -1,4 +1,5 @@
 const dbUrl = "https://script.google.com/macros/s/AKfycbxDRhfclsaQGBR-xFMQWapvZetM8BlN089vlswhYu1AEFWONGVq53ap-eDehMNvIBKuuw/exec";
+const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
 
@@ -42,6 +43,10 @@ function displayBoardInfo(data) {
     }
 
     var board = parseBoard(data.string);
+    board.comments = data.name;
+    board.perks = BingoEnum_EXPFLAGS["LOCKOUT"];
+    board.shelter = data.shelter;
+    board.toBin = boardToBin(board);
 
     const infoName = document.createElement("label");
     infoName.className = "board-name";
@@ -54,6 +59,16 @@ function displayBoardInfo(data) {
     infoShelter.appendChild(document.createTextNode(data.shelter));
     extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
+
+    const link = document.createElement("a");
+    link.href = vistaUrl + "?b=" + binToBase64u(board.toBin);
+    link.target = "_blank";
+    const icon = document.createElement("img");
+    icon.src = "bingoVista.png";
+    icon.title = "View on BingoVista";
+    icon.alt = "View on BingoVista";
+    link.appendChild(icon);
+    extraControls.appendChild(link);
 
     const infoCanvas = document.createElement("canvas");
     infoCanvas.id = data.name + "-canvas";

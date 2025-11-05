@@ -24,10 +24,31 @@ body {
     font-size: 50pt;
 }
 
+.board-info div {
+    display: flex;
+    flex-direction: row;
+    width: var(--canvas-size);
+    font-size: 20pt;
+}
+
 .board-shelter {
     color: white;
     text-align: center;
-    font-size: 16pt;
+    flex-grow: 1;
+}
+
+.board-info a {
+    height: 1em;
+}
+
+.board-info img {
+    height: calc(1em - 4px);
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+}
+
+.board-info img:hover {
+    filter: brightness(130%);
 }
 
 .board-info canvas {
