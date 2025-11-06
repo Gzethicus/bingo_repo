@@ -22,7 +22,7 @@ body {
     animation-name: fade-out;
 }
 
-.used {
+.played {
     display: none;
     color: #b0b0b0;
 }

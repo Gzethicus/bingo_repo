@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     }
 
-    const seePlayed = document.getElementById("see-used");
+    const seePlayed = document.getElementById("see-played");
     if (seePlayed !== undefined) {
-        toggleUsedVisibility({"target" : {"checked" : seePlayed.checked}})
+        togglePlayedVisibility({"target" : {"checked" : seePlayed.checked}})
     }
 });
 
@@ -40,11 +40,11 @@ function displayBoardInfo(data) {
     const infoDiv = document.getElementById(data.name);
     const divLink = document.getElementById(data.name + "-link");
     if (data.used) {
-        infoDiv.classList.add("used");
-        divLink.classList.add("used");
+        infoDiv.classList.add("played");
+        divLink.classList.add("played");
     } else {
-        infoDiv.classList.remove("used");
-        divLink.classList.remove("used");
+        infoDiv.classList.remove("played");
+        divLink.classList.remove("played");
     }
 
     var board = parseBoard(data.string);
@@ -65,17 +65,17 @@ function displayBoardInfo(data) {
     extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
 
-    const usedContainer = document.createElement("label");
-    usedContainer.className = "icon-button";
-    usedContainer.title = "Toggle played/available";
-    const usedInput = document.createElement("input");
-    usedInput.type = "checkbox";
-    usedInput.checked = data.used;
-    usedInput.addEventListener("change", setUsed.bind(this, data.name));
-    usedContainer.appendChild(usedInput);
-    const usedIcon = document.createElement("span");
-    usedContainer.appendChild(usedIcon);
-    extraControls.appendChild(usedContainer);
+    const playedContainer = document.createElement("label");
+    playedContainer.className = "icon-button";
+    playedContainer.title = "Toggle played/available";
+    const playedInput = document.createElement("input");
+    playedInput.type = "checkbox";
+    playedInput.checked = data.used;
+    playedInput.addEventListener("change", setPlayed.bind(this, data.name));
+    playedContainer.appendChild(playedInput);
+    const playedIcon = document.createElement("span");
+    playedContainer.appendChild(playedIcon);
+    extraControls.appendChild(playedContainer);
 
     const vistaLink = document.createElement("a");
     vistaLink.className = "icon-button";
@@ -99,7 +99,7 @@ function displayBoardInfo(data) {
     redrawBoard(infoCanvas.id, board);
 }
 
-async function setUsed(board, e) {
+async function setPlayed(board, e) {
     var payload = {
         method : "POST",
         redirect: "follow",
@@ -119,11 +119,11 @@ async function setUsed(board, e) {
         return;
     }
     if (res.ok && e.target.checked) {
-        document.getElementById(board).classList.add("used");
-        document.getElementById(board + "-link").classList.add("used");
+        document.getElementById(board).classList.add("played");
+        document.getElementById(board + "-link").classList.add("played");
     } else if (res.ok) {
-        document.getElementById(board).classList.remove("used");
-        document.getElementById(board + "-link").classList.remove("used");
+        document.getElementById(board).classList.remove("played");
+        document.getElementById(board + "-link").classList.remove("played");
     } else {
         e.target.checked ^= true;
     }
@@ -143,7 +143,7 @@ function confirmCopyToClipboard(e) {
     confirm.style.animation = null;
 }
 
-function toggleUsedVisibility(e) {
+function togglePlayedVisibility(e) {
     const visible = e.target.checked;
     var styleSheet;
     for (var i = 0; i < document.styleSheets.length; i++) {
@@ -156,7 +156,7 @@ function toggleUsedVisibility(e) {
 
     for (var i = 0; i < styleSheet.cssRules.length; i++) {
         var rule = styleSheet.cssRules[i];
-        if (rule.selectorText === ".used") {
+        if (rule.selectorText === ".played") {
             if (visible)
                 rule.style.removeProperty("display");
             else
