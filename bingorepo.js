@@ -1,4 +1,4 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbxDRhfclsaQGBR-xFMQWapvZetM8BlN089vlswhYu1AEFWONGVq53ap-eDehMNvIBKuuw/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbwCbTEc9N1OObGxOXsSlh7kttwPZsudswTYMnpH-ofOSwm4v3OdwAKrH_roB7uSjHa6XA/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
@@ -15,6 +15,11 @@ document.addEventListener("DOMContentLoaded", async function() {
             createBoardInfo(boardList[i].name);
             displayBoardInfo(boardList[i]);
         }
+    }
+
+    const seePlayed = document.getElementById("see-used");
+    if (seePlayed !== undefined) {
+        toggleUsedVisibility({"target" : {"checked" : seePlayed.checked}})
     }
 });
 
@@ -60,15 +65,28 @@ function displayBoardInfo(data) {
     extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
 
-    const link = document.createElement("a");
-    link.href = vistaUrl + "?b=" + binToBase64u(board.toBin);
-    link.target = "_blank";
-    const icon = document.createElement("img");
-    icon.src = "bingoVista.png";
-    icon.title = "View on BingoVista";
-    icon.alt = "View on BingoVista";
-    link.appendChild(icon);
-    extraControls.appendChild(link);
+    const usedContainer = document.createElement("label");
+    usedContainer.className = "icon-button";
+    usedContainer.title = "Toggle played/available";
+    const usedInput = document.createElement("input");
+    usedInput.type = "checkbox";
+    usedInput.checked = data.used;
+    usedInput.addEventListener("change", setUsed.bind(this, data.name));
+    usedContainer.appendChild(usedInput);
+    const usedIcon = document.createElement("span");
+    usedContainer.appendChild(usedIcon);
+    extraControls.appendChild(usedContainer);
+
+    const vistaLink = document.createElement("a");
+    vistaLink.className = "icon-button";
+    vistaLink.href = vistaUrl + "?b=" + binToBase64u(board.toBin);
+    vistaLink.target = "_blank";
+    const vistaIcon = document.createElement("img");
+    vistaIcon.src = "graphics\\bingoVista.png";
+    vistaLink.title = "View on BingoVista";
+    vistaIcon.alt = "View on BingoVista";
+    vistaLink.appendChild(vistaIcon);
+    extraControls.appendChild(vistaLink);
 
     const infoCanvas = document.createElement("canvas");
     infoCanvas.id = data.name + "-canvas";
@@ -79,6 +97,36 @@ function displayBoardInfo(data) {
     infoDiv.appendChild(infoCanvas);
 
     redrawBoard(infoCanvas.id, board);
+}
+
+async function setUsed(board, e) {
+    var payload = {
+        method : "POST",
+        redirect: "follow",
+        headers : {"Content-Type" : "text/plain"},
+        body: JSON.stringify({
+            "character" : "Watcher",
+            "board" : board,
+            "used" : e.target.checked
+        })
+    };
+
+    var res;
+    try {
+        res = await fetch(dbUrl, payload);
+    } catch (error) {
+        e.target.checked ^= true;
+        return;
+    }
+    if (res.ok && e.target.checked) {
+        document.getElementById(board).classList.add("used");
+        document.getElementById(board + "-link").classList.add("used");
+    } else if (res.ok) {
+        document.getElementById(board).classList.remove("used");
+        document.getElementById(board + "-link").classList.remove("used");
+    } else {
+        e.target.checked ^= true;
+    }
 }
 
 function onCanvasClicked(e) {
@@ -100,7 +148,7 @@ function toggleUsedVisibility(e) {
     var styleSheet;
     for (var i = 0; i < document.styleSheets.length; i++) {
         var sheet = document.styleSheets[i];
-        if (sheet.href.endsWith("/styles.css")) {
+        if (sheet.href.includes("/styles.css")) {
             styleSheet = sheet;
             break;
         }

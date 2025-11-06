@@ -11,10 +11,6 @@ body {
     background-color: #080808;
 }
 
-.used {
-    display: none;
-}
-
 #copy-confirm {
     font-size: 30pt;
     color: #20b020;
@@ -24,6 +20,43 @@ body {
     pointer-events: none;
     animation-duration: 3s;
     animation-name: fade-out;
+}
+
+.used {
+    display: none;
+    color: #b0b0b0;
+}
+
+.icon-button {
+    height: calc(1em - 4px);
+    width: calc(1em - 4px);
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    padding: 0;
+    margin-left: 2px;
+}
+
+.icon-button:hover {
+    filter: brightness(130%);
+}
+
+.icon-button * {
+    position: absolute;
+    height: calc(1em - 4px);
+    width: calc(1em - 4px);
+    border-radius: 6px;
+}
+
+.icon-button input[type=checkbox] {
+    display: none;
+}
+
+.icon-button > input[type=checkbox] + * {
+    background-image: url("..\\graphics\\cross.svg");
+}
+
+.icon-button > input[type=checkbox]:checked + * {
+    background-image: url("..\\graphics\\check.svg");
 }
 
 @keyframes fade-out {
