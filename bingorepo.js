@@ -70,7 +70,7 @@ function displayBoardInfo(data) {
     playedContainer.title = "Toggle played/available";
     const playedInput = document.createElement("input");
     playedInput.type = "checkbox";
-    playedInput.checked = data.used;
+    playedInput.checked = !data.used;
     playedInput.addEventListener("change", setPlayed.bind(this, data.name));
     playedContainer.appendChild(playedInput);
     const playedIcon = document.createElement("span");
@@ -107,7 +107,7 @@ async function setPlayed(board, e) {
         body: JSON.stringify({
             "character" : "Watcher",
             "board" : board,
-            "used" : e.target.checked
+            "used" : !e.target.checked
         })
     };
 
@@ -118,7 +118,7 @@ async function setPlayed(board, e) {
         e.target.checked ^= true;
         return;
     }
-    if (res.ok && e.target.checked) {
+    if (res.ok && !e.target.checked) {
         document.getElementById(board).classList.add("played");
         document.getElementById(board + "-link").classList.add("played");
     } else if (res.ok) {

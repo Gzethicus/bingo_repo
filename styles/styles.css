@@ -34,6 +34,7 @@ body {
     border-radius: 6px;
     padding: 0;
     margin-left: 2px;
+    cursor:pointer;
 }
 
 .icon-button:hover {
