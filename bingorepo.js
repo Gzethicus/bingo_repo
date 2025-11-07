@@ -8,13 +8,22 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     var reqUrl = new URL(dbUrl);
     reqUrl.search = "character=Watcher";
-    const boardList = await fetch(reqUrl).then(response => response.json());
+    var boardList;
+    try {
+        boardList = await fetch(reqUrl).then(response => response.json());
+    } catch (error) {
+        var statusMessage = document.getElementById("status-message");
+        statusMessage.classList.remove("ellipsed");
+        statusMessage.innerHTML = "error fetching data :<br/>" + error.message + "<br/><br/>Please reload the page or contact Gzethicus.";
+        return;
+    }
 
     if (document.getElementById("board-info") !== undefined && document.getElementById("navigation") !== undefined) {
         for (i = 0; i < boardList.length; i++) {
             createBoardInfo(boardList[i].name);
             displayBoardInfo(boardList[i]);
         }
+        document.getElementById("status-message").style.display = "none";
     }
 
     const seePlayed = document.getElementById("see-played");

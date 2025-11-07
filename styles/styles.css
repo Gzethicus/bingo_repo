@@ -10,6 +10,19 @@ body {
     text-align: center;
 }
 
+#status-message {
+    font-size: 50pt;
+}
+
+.ellipsed:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  animation: ellipsis steps(4,end) 3s infinite;
+  content: "\2026"; /* ascii code for the ellipsis character */
+  width: 0px;
+}
+
 #copy-confirm {
     font-size: 30pt;
     color: #20b020;
@@ -58,6 +71,12 @@ body {
 
 .icon-button > input[type=checkbox]:checked + * {
     background-image: url("..\\graphics\\check.svg");
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;    
+  }
 }
 
 @keyframes fade-out {
