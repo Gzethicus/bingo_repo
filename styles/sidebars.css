@@ -9,26 +9,29 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    color: #ffffff;
     font-size: 16pt;
 }
 
 #navigation {
     left: 10px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-#navigation a, #navigation a:visited {
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+#navigation a {
     color: #0066bb;
 }
 
+#navigation a.played {
+    filter: saturate(0.5);
+}
+
 #navigation a:hover {
-    color: #0078f0;
+    filter: brightness(130%);
 }
 
 #controls {
     right: 10px;
+    text-align: left;
 }
 
 #controls div {

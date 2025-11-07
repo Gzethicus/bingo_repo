@@ -3,12 +3,11 @@
     src: url(..\\bingovista\\Rodondo.otf) format("OpenType");
 }
 
-* {
-    font-family: "Rodondo";
-}
-
 body {
+    font-family: "Rodondo";
+    color: white;
     background-color: #080808;
+    text-align: center;
 }
 
 #copy-confirm {
@@ -34,6 +33,7 @@ body {
     border-radius: 6px;
     padding: 0;
     margin-left: 2px;
+    text-align: left;
     cursor:pointer;
 }
 
