@@ -76,7 +76,7 @@ function displayBoardInfo(data) {
 
     const playedContainer = document.createElement("label");
     playedContainer.className = "icon-button";
-    playedContainer.title = "Toggle played/available";
+    playedContainer.title = "Toggle available/played";
     const playedInput = document.createElement("input");
     playedInput.type = "checkbox";
     playedInput.checked = !data.used;
