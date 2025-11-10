@@ -56,7 +56,7 @@ function displayBoardInfo(data) {
         divLink.classList.remove("played");
     }
 
-    var board = parseBoard(data.string);
+    var board = parseText(data.string);
     board.comments = data.name;
     board.perks = BingoEnum_EXPFLAGS["LOCKOUT"];
     board.shelter = data.shelter;
