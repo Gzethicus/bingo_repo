@@ -1,4 +1,4 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbwCbTEc9N1OObGxOXsSlh7kttwPZsudswTYMnpH-ofOSwm4v3OdwAKrH_roB7uSjHa6XA/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbzHD7pG7AKQ7DlsaRfIE8UfatkjQnvH8UUooxBATlgVwlz5zXs3Zumcmxded6d7C_vRVg/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
@@ -59,7 +59,6 @@ function displayBoardInfo(data) {
     var board = parseText(data.string);
     board.comments = data.name;
     board.perks = BingoEnum_EXPFLAGS["LOCKOUT"];
-    board.shelter = data.shelter;
     board.toBin = boardToBin(board);
 
     const infoName = document.createElement("label");
@@ -67,10 +66,15 @@ function displayBoardInfo(data) {
     infoName.appendChild(document.createTextNode(data.name));
     infoDiv.appendChild(infoName);
 
+    const infoCreator = document.createElement("label");
+    infoCreator.className = "board-shelter";
+    infoCreator.appendChild(document.createTextNode("by " + data.creator));
+    infoDiv.appendChild(infoCreator);
+
     const extraControls = document.createElement("div");
     const infoShelter = document.createElement("label");
     infoShelter.className = "board-shelter";
-    infoShelter.appendChild(document.createTextNode(data.shelter));
+    infoShelter.appendChild(document.createTextNode(board.shelter));
     extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
 

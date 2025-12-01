@@ -30,6 +30,7 @@ body {
 }
 
 .board-shelter {
+    font-size: 20pt;
     flex-grow: 1;
 }
 
