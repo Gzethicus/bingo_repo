@@ -7,11 +7,16 @@ var tabs = [];
 var tabPanels = [];
 var tabNavs = [];
 
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", function() {
     var reqUrl = new URL(dbUrl);
-    var tablist;
+    var tabMakingPromise;
     try {
-        tablist = await fetch(reqUrl).then(response => response.json());
+        tabMakingPromise = fetch(reqUrl)
+            .then(response => response.json())
+            .then((tabList) => {
+                for (var tab of tabList)
+                    createTab(tab);
+            });
     } catch (error) {
         var statusMessage = document.getElementById("status-message");
         statusMessage.classList.remove("ellipsed");
@@ -19,34 +24,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         return;
     }
 
-    for (var tab of tablist) {
-        const newTab = document.createElement("div");
-        newTab.className = "text-button";
-        newTab.role = "tab";
-        newTab.setAttribute("aria-controls", tab);
-        newTab.addEventListener("click", (e) => {
-            showTab(e.target);
-        })
-        document.getElementById("tabs").appendChild(newTab);
-        newTab.appendChild(document.createTextNode(tab));
-
-        const newTabPanel = document.createElement("div");
-        newTabPanel.id = tab;
-        newTabPanel.role = "tabpanel";
-        newTabPanel.tabIndex = 0;
-        document.getElementById("board-list").appendChild(newTabPanel);
-        tabPanels.push(newTabPanel);
-        
-        const newTabNav = document.createElement("div");
-        newTabNav.id = tab + "-nav";
-        newTabNav.role = "tabpanel";
-        newTabNav.tabIndex = 0;
-        document.getElementById("navigation").appendChild(newTabNav);
-        tabPanels.push(newTabNav);
-    }
-
     canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
-    await loadTab("Watcher");
+    loadTab("Watcher", tabMakingPromise);
 
     const seePlayed = document.getElementById("see-played");
     if (seePlayed !== undefined) {
@@ -84,13 +63,42 @@ function showTab(targetTab) {
     targetTabNav.hidden = false;
 }
 
-async function loadTab(tab) {
+function createTab(tab) {
+    const newTab = document.createElement("div");
+    newTab.className = "text-button";
+    newTab.role = "tab";
+    newTab.setAttribute("aria-controls", tab);
+    newTab.addEventListener("click", (e) => {
+        showTab(e.target);
+    })
+    document.getElementById("tabs").appendChild(newTab);
+    newTab.appendChild(document.createTextNode(tab));
+    tabs.push(newTab);
+
+    const newTabPanel = document.createElement("div");
+    newTabPanel.id = tab;
+    newTabPanel.role = "tabpanel";
+    newTabPanel.tabIndex = 0;
+    document.getElementById("board-list").appendChild(newTabPanel);
+    tabPanels.push(newTabPanel);
+    
+    const newTabNav = document.createElement("div");
+    newTabNav.id = tab + "-nav";
+    newTabNav.role = "tabpanel";
+    newTabNav.tabIndex = 0;
+    document.getElementById("navigation").appendChild(newTabNav);
+    tabNavs.push(newTabNav);
+}
+
+async function loadTab(tab, tabMakingPromise) {
     if (preloaded.includes(tab))
         return;
 
     document.getElementById("status-message").style.display = "block";
     preloaded.push(tab);
-    boardList = await fetchBoardList(tab)
+    boardList = await fetchBoardList(tab);
+    if (tabMakingPromise !== undefined)
+        await tabMakingPromise;
 
     if (document.getElementById("board-info") !== undefined && document.getElementById("navigation") !== undefined) {
         for (i = 0; i < boardList.length; i++) {
