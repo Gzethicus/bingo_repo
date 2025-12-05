@@ -1,13 +1,110 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbzHD7pG7AKQ7DlsaRfIE8UfatkjQnvH8UUooxBATlgVwlz5zXs3Zumcmxded6d7C_vRVg/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbysizVi-cl7ZhZr5p20fRy3aPWfdxwoIuvxfJVfJnTs9TVlboHp39H5mnQ_8Rusl4E/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
+var preloaded = [];
+var tabs = [];
+var tabPanels = [];
+var tabNavs = [];
 
 document.addEventListener("DOMContentLoaded", async function() {
-    canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
-
     var reqUrl = new URL(dbUrl);
-    reqUrl.search = "character=Watcher";
+    var tablist;
+    try {
+        tablist = await fetch(reqUrl).then(response => response.json());
+    } catch (error) {
+        var statusMessage = document.getElementById("status-message");
+        statusMessage.classList.remove("ellipsed");
+        statusMessage.innerHTML = "error fetching data :<br/>" + error.message + "<br/><br/>Please reload the page or contact Gzethicus.";
+        return;
+    }
+
+    for (var tab of tablist) {
+        const newTab = document.createElement("div");
+        newTab.className = "text-button";
+        newTab.role = "tab";
+        newTab.setAttribute("aria-controls", tab);
+        newTab.addEventListener("click", (e) => {
+            showTab(e.target);
+        })
+        document.getElementById("tabs").appendChild(newTab);
+        newTab.appendChild(document.createTextNode(tab));
+
+        const newTabPanel = document.createElement("div");
+        newTabPanel.id = tab;
+        newTabPanel.role = "tabpanel";
+        newTabPanel.tabIndex = 0;
+        document.getElementById("board-list").appendChild(newTabPanel);
+        tabPanels.push(newTabPanel);
+        
+        const newTabNav = document.createElement("div");
+        newTabNav.id = tab + "-nav";
+        newTabNav.role = "tabpanel";
+        newTabNav.tabIndex = 0;
+        document.getElementById("navigation").appendChild(newTabNav);
+        tabPanels.push(newTabNav);
+    }
+
+    canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
+    await loadTab("Watcher");
+
+    const seePlayed = document.getElementById("see-played");
+    if (seePlayed !== undefined) {
+        togglePlayedVisibility({"target" : {"checked" : seePlayed.checked}});
+    }
+});
+
+function showTab(targetTab) {
+    const tabName = targetTab.getAttribute("aria-controls");
+    loadTab(tabName);
+
+    for (const tab of tabs) {
+        if (tab === targetTab)
+            continue;
+        tab.setAttribute("aria-selected", false);
+        tab.tabIndex = -1;
+    }
+    targetTab.setAttribute("aria-selected", true);
+    targetTab.tabIndex = 0;
+
+    const targetTabPanel = document.getElementById(tabName);
+    for (const panel of tabPanels) {
+        if (panel === targetTabPanel)
+            continue;
+        panel.hidden = true;
+    }
+    targetTabPanel.hidden = false;
+    
+    const targetTabNav = document.getElementById(tabName + "-nav");
+    for (const nav of tabNavs) {
+        if (nav === targetTabNav)
+            continue;
+        nav.hidden = true;
+    }
+    targetTabNav.hidden = false;
+}
+
+async function loadTab(tab) {
+    if (preloaded.includes(tab))
+        return;
+
+    document.getElementById("status-message").style.display = "block";
+    preloaded.push(tab);
+    boardList = await fetchBoardList(tab)
+
+    if (document.getElementById("board-info") !== undefined && document.getElementById("navigation") !== undefined) {
+        for (i = 0; i < boardList.length; i++) {
+            createBoardInfo(boardList[i].name, tab);
+            displayBoardInfo(boardList[i]);
+        }
+        document.getElementById("status-message").style.display = "none";
+    }
+}
+
+async function fetchBoardList(character) {
+    var reqUrl = new URL(dbUrl);
+    reqUrl.search = "character=" + character;
+
     var boardList;
     try {
         boardList = await fetch(reqUrl).then(response => response.json());
@@ -17,32 +114,20 @@ document.addEventListener("DOMContentLoaded", async function() {
         statusMessage.innerHTML = "error fetching data :<br/>" + error.message + "<br/><br/>Please reload the page or contact Gzethicus.";
         return;
     }
+    return boardList;
+}
 
-    if (document.getElementById("board-info") !== undefined && document.getElementById("navigation") !== undefined) {
-        for (i = 0; i < boardList.length; i++) {
-            createBoardInfo(boardList[i].name);
-            displayBoardInfo(boardList[i]);
-        }
-        document.getElementById("status-message").style.display = "none";
-    }
-
-    const seePlayed = document.getElementById("see-played");
-    if (seePlayed !== undefined) {
-        togglePlayedVisibility({"target" : {"checked" : seePlayed.checked}})
-    }
-});
-
-function createBoardInfo(name) {
+function createBoardInfo(name, character) {
     const newDiv = document.createElement("div");
     newDiv.className = "board-info";
     newDiv.id = name;
-    document.getElementById("board-list").appendChild(newDiv);
+    document.getElementById(character || "board-list").appendChild(newDiv);
 
     const link = document.createElement("a");
     link.href = "#" + name;
     link.id = name + "-link";
     link.appendChild(document.createTextNode(name));
-    document.getElementById("navigation").appendChild(link);
+    document.getElementById(character + "-nav").appendChild(link);
 }
 
 function displayBoardInfo(data) {

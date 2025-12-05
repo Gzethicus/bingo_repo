@@ -17,6 +17,10 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+a {
+    display: block;
+}
+
 #navigation a {
     color: #0066bb;
 }

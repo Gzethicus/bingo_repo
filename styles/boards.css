@@ -2,6 +2,15 @@ body {
     --canvas-size: 454px;
 }
 
+#tabs {
+    display: flex;
+    flex-direction: row;
+}
+
+#tabs > * {
+    flex-grow: 1;
+}
+
 #board-list {
     position: absolute;
     top: 10px;
