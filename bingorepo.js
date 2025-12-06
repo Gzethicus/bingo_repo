@@ -8,12 +8,16 @@ var tabPanels = [];
 var tabNavs = [];
 
 document.addEventListener("DOMContentLoaded", function() {
+    var searchParams = new URLSearchParams(document.URL.split("?")[1]);
+
     var reqUrl = new URL(dbUrl);
     var tabMakingPromise;
     try {
         tabMakingPromise = fetch(reqUrl)
             .then(response => response.json())
             .then((tabList) => {
+                if (!tabList.includes(searchParams.get("character")))
+                    tabList.push(searchParams.get("character"));
                 for (var tab of tabList)
                     createTab(tab);
             });
@@ -25,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
-    loadTab("Watcher", tabMakingPromise);
+    loadTab(searchParams.get("character") || "Watcher", tabMakingPromise);
 
     const seePlayed = document.getElementById("see-played");
     if (seePlayed !== undefined) {
