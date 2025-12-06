@@ -9,6 +9,7 @@ var tabNavs = [];
 
 document.addEventListener("DOMContentLoaded", function() {
     var searchParams = new URLSearchParams(document.URL.split("?")[1]);
+    var character = searchParams.get("character") || "Watcher";
 
     var reqUrl = new URL(dbUrl);
     var tabMakingPromise;
@@ -16,10 +17,13 @@ document.addEventListener("DOMContentLoaded", function() {
         tabMakingPromise = fetch(reqUrl)
             .then(response => response.json())
             .then((tabList) => {
-                if (searchParams.get("character") && !tabList.includes(searchParams.get("character")))
-                    tabList.push(searchParams.get("character"));
-                for (var tab of tabList)
-                    createTab(tab);
+                var found = false;
+                for (var tab of tabList) {
+                    createTab(tab, tab == character);
+                    found |= tab == character;
+                }
+                if (!found)
+                    createTab(character, true);
             });
     } catch (error) {
         var statusMessage = document.getElementById("status-message");
@@ -29,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
-    loadTab(searchParams.get("character") || "Watcher", tabMakingPromise);
+    loadTab(character, tabMakingPromise);
 
     const seePlayed = document.getElementById("see-played");
     if (seePlayed !== undefined) {
@@ -67,10 +71,11 @@ function showTab(targetTab) {
     targetTabNav.hidden = false;
 }
 
-function createTab(tab) {
+function createTab(tab, selected) {
     const newTab = document.createElement("div");
     newTab.className = "text-button";
     newTab.role = "tab";
+    newTab.setAttribute("aria-selected", selected);
     newTab.setAttribute("aria-controls", tab);
     newTab.addEventListener("click", (e) => {
         showTab(e.target);
@@ -82,14 +87,16 @@ function createTab(tab) {
     const newTabPanel = document.createElement("div");
     newTabPanel.id = tab;
     newTabPanel.role = "tabpanel";
-    newTabPanel.tabIndex = 0;
+    newTabPanel.tabIndex = selected ? 0 : -1;
+    newTabPanel.hidden = !selected;
     document.getElementById("board-list").appendChild(newTabPanel);
     tabPanels.push(newTabPanel);
     
     const newTabNav = document.createElement("div");
     newTabNav.id = tab + "-nav";
     newTabNav.role = "tabpanel";
-    newTabNav.tabIndex = 0;
+    newTabNav.tabIndex = selected ? 0 : -1;
+    newTabNav.hidden = !selected;
     document.getElementById("navigation").appendChild(newTabNav);
     tabNavs.push(newTabNav);
 }
