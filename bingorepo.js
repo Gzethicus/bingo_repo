@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tabMakingPromise = fetch(reqUrl)
             .then(response => response.json())
             .then((tabList) => {
-                if (!tabList.includes(searchParams.get("character")))
+                if (searchParams.get("character") && !tabList.includes(searchParams.get("character")))
                     tabList.push(searchParams.get("character"));
                 for (var tab of tabList)
                     createTab(tab);
