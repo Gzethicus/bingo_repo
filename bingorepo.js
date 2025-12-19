@@ -160,10 +160,13 @@ function displayBoardInfo(data) {
         divLink.classList.remove("played");
     }
 
-    var board = parseText(data.string);
-    board.comments = data.name;
-    board.perks = BingoEnum_EXPFLAGS["LOCKOUT"];
-    board.toBin = boardToBin(board);
+    var bv = new Bingovista();
+    bv.setup({ dataSrc: data.string, dataType: "text" });
+    bv.boardId = data.name + "-canvas";
+    bv.board.comments = data.name;
+    bv.board.perks = bv.maps.expflags.find((el) => el.name === "LOCKOUT").value;
+
+    bv.board.toBin = bv.boardToBin();
 
     const infoName = document.createElement("label");
     infoName.className = "board-name";
@@ -178,7 +181,7 @@ function displayBoardInfo(data) {
     const extraControls = document.createElement("div");
     const infoShelter = document.createElement("label");
     infoShelter.className = "board-shelter";
-    infoShelter.appendChild(document.createTextNode(board.shelter));
+    infoShelter.appendChild(document.createTextNode(bv.board.shelter));
     extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
 
@@ -196,7 +199,7 @@ function displayBoardInfo(data) {
 
     const vistaLink = document.createElement("a");
     vistaLink.className = "icon-button";
-    vistaLink.href = vistaUrl + "?b=" + binToBase64u(board.toBin);
+    vistaLink.href = vistaUrl + "?b=" + Bingovista.binToBase64u(bv.board.toBin);
     vistaLink.target = "_blank";
     const vistaIcon = document.createElement("img");
     vistaIcon.src = "graphics\\bingoVista.png";
@@ -205,15 +208,19 @@ function displayBoardInfo(data) {
     vistaLink.appendChild(vistaIcon);
     extraControls.appendChild(vistaLink);
 
+    const canvDiv = document.createElement("div");
+    canvDiv.id = data.name + "-canvas";
+    infoDiv.appendChild(canvDiv);
     const infoCanvas = document.createElement("canvas");
-    infoCanvas.id = data.name + "-canvas";
     infoCanvas.width = canvasSize;
     infoCanvas.height = canvasSize;
     infoCanvas.appendChild(document.createTextNode(data.string));
     infoCanvas.addEventListener("click", onCanvasClicked);
-    infoDiv.appendChild(infoCanvas);
-
-    redrawBoard(infoCanvas.id, board);
+    canvDiv.appendChild(infoCanvas);
+    const cursDiv = document.createElement("div");
+    canvDiv.appendChild(cursDiv);
+    
+    bv.refreshBoard();
 }
 
 async function setPlayed(board, e) {
