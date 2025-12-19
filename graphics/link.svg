@@ -1,0 +1,18 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path
+        d=" M 25 45
+            L 20 50
+            A 1 1 0 0 0 50 80
+            L 55 75
+            M 45 25
+            L 50 20
+            A 1 1 0 0 1 80 50
+            L 75 55
+            M 35 65
+            L 65 35"
+        fill="none"
+        stroke="#d8d8d8"
+        stroke-width="15"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+</svg>

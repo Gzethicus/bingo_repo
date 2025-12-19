@@ -179,10 +179,6 @@ function displayBoardInfo(data) {
     infoDiv.appendChild(infoCreator);
 
     const extraControls = document.createElement("div");
-    const infoShelter = document.createElement("label");
-    infoShelter.className = "board-shelter";
-    infoShelter.appendChild(document.createTextNode(bv.board.shelter));
-    extraControls.appendChild(infoShelter);
     infoDiv.appendChild(extraControls);
 
     const playedContainer = document.createElement("label");
@@ -197,6 +193,11 @@ function displayBoardInfo(data) {
     playedContainer.appendChild(playedIcon);
     extraControls.appendChild(playedContainer);
 
+    const infoShelter = document.createElement("label");
+    infoShelter.className = "board-shelter";
+    infoShelter.appendChild(document.createTextNode(bv.board.shelter));
+    extraControls.appendChild(infoShelter);
+
     const vistaLink = document.createElement("a");
     vistaLink.className = "icon-button";
     vistaLink.href = vistaUrl + "?b=" + Bingovista.binToBase64u(bv.board.toBin);
@@ -207,6 +208,15 @@ function displayBoardInfo(data) {
     vistaIcon.alt = "View on BingoVista";
     vistaLink.appendChild(vistaIcon);
     extraControls.appendChild(vistaLink);
+
+    const shortLink = document.createElement("label");
+    shortLink.className = "icon-button";
+    shortLink.title = "Get a short link to this board";
+    shortLink.addEventListener("click", getShortLink.bind(this, bv.board));
+    const linkIcon = document.createElement("img");
+    linkIcon.src = "graphics\\link.svg";
+    shortLink.appendChild(linkIcon);
+    extraControls.appendChild(shortLink);
 
     const canvDiv = document.createElement("div");
     canvDiv.id = data.name + "-canvas";
@@ -288,4 +298,56 @@ function togglePlayedVisibility(e) {
             break;
         }
     }
+}
+
+
+async function getShortLink(board, e) {
+    const callback = confirmCopyToClipboard.bind(this, e);
+    makeRequest(board)
+    .then((resp) => {
+        return navigator.clipboard.writeText(resp);
+    }).then(callback);
+}
+
+
+// shamelessly copied from T3sl4co1l's shortener and tweaked a tiny bit
+function makeRequest(board) {
+    var status;
+    return fetch(
+        new URL("https://www.seventransistorlabs.com/bserv/BingoServer.dll"), {
+            method: "POST",
+            body: board.toBin,
+            headers: {
+                "content-type": "application/octet-stream"
+            }
+        }
+    ).then(function(r) {
+        //	Request succeeds
+        console.log("Response: " + r.status + ", content-type: " + r.headers.get("content-type"));
+        return r.arrayBuffer();
+    }, function(r) {
+        //	Request failed (connection, invalid CORS, etc. error)
+        status = "Error connecting to server, or request rejected.";
+    }).then(function(a) {
+        //	success, arrayBuffer() complete
+        var s = new TextDecoder().decode(new Uint8Array(a));
+        var resp;
+        try {
+            resp = JSON.parse(s);
+        } catch (e) {
+            status = "Server accepted request; error parsing response: \"" + s + "\"";
+            return;
+        }
+        if (resp.status === undefined || resp.cause === undefined || resp.key === undefined) {
+            status = "Server returned unexpected response; status: " + resp.status + ", cause: " + resp.cause + ", key: " + resp.key;
+            return;
+        }
+        if (resp.cause === "exists")
+            status = "Board already exists, or collision occurred; please verify the shortened URL is as desired.";
+        else
+            status = "Accepted.";
+        console.log(status)
+
+        return "https://t3sl4co1l.github.io/bingovista/bingovista.html?q=" + resp.key;
+    });
 }
