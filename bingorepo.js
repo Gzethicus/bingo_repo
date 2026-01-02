@@ -1,4 +1,4 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbysizVi-cl7ZhZr5p20fRy3aPWfdxwoIuvxfJVfJnTs9TVlboHp39H5mnQ_8Rusl4E/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbytUD6RrztCIJCVsJX7QshiEOPZxmk_mb--kEffV5t4t05SMiMuwi8qnYbIQIgr3BPoQg/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
@@ -9,20 +9,21 @@ var tabNavs = [];
 
 document.addEventListener("DOMContentLoaded", function() {
     var searchParams = new URLSearchParams(document.URL.split("?")[1]);
-    var character = searchParams.get("character") || "Watcher";
 
     var reqUrl = new URL(dbUrl);
     var tabMakingPromise;
     try {
         tabMakingPromise = fetch(reqUrl)
             .then(response => response.json())
-            .then((tabList) => {
+            .then((resp) => {
+                var character = searchParams.get("character") || resp["default"];
+                var tabList = resp["list"];
                 var found = false;
                 for (var tab of tabList) {
                     createTab(tab, tab == character);
                     found |= tab == character;
                 }
-                if (!found)
+                if (!found && character !== "default")
                     createTab(character, true);
             });
     } catch (error) {
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
+    var character = searchParams.get("character") || "default";
     canvasSize = parseInt(window.getComputedStyle(document.body).getPropertyValue("--canvas-size"));
     loadTab(character, tabMakingPromise);
 
@@ -106,8 +108,10 @@ async function loadTab(tab, tabMakingPromise) {
         return;
 
     document.getElementById("status-message").style.display = "block";
+    var resp = await fetchBoardList(tab);
+    tab = resp["name"];
+    var boardList = resp["list"];
     preloaded.push(tab);
-    boardList = await fetchBoardList(tab);
     if (tabMakingPromise !== undefined)
         await tabMakingPromise;
 
@@ -124,16 +128,16 @@ async function fetchBoardList(character) {
     var reqUrl = new URL(dbUrl);
     reqUrl.search = "character=" + character;
 
-    var boardList;
+    var resp;
     try {
-        boardList = await fetch(reqUrl).then(response => response.json());
+        resp = await fetch(reqUrl).then(response => response.json());
     } catch (error) {
         var statusMessage = document.getElementById("status-message");
         statusMessage.classList.remove("ellipsed");
         statusMessage.innerHTML = "error fetching data :<br/>" + error.message + "<br/><br/>Please reload the page or contact Gzethicus.";
         return;
     }
-    return boardList;
+    return resp;
 }
 
 function createBoardInfo(name, character) {
