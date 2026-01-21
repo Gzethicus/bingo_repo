@@ -1,4 +1,4 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbytUD6RrztCIJCVsJX7QshiEOPZxmk_mb--kEffV5t4t05SMiMuwi8qnYbIQIgr3BPoQg/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbxNxoFRdcLCUbvdwjiqKmkimu5TZ3Sj0oxj7a8mDFABiB0MFgo_P5n1KY4jUHu0X5iClg/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
@@ -181,6 +181,13 @@ function displayBoardInfo(data) {
     infoCreator.className = "board-shelter";
     infoCreator.appendChild(document.createTextNode("by " + data.creator));
     infoDiv.appendChild(infoCreator);
+
+    if(data.playtesters) {
+        const infoTesters = document.createElement("label");
+        infoTesters.className = "board-shelter";
+        infoTesters.appendChild(document.createTextNode("playtesting: " + data.playtesters));
+        infoDiv.appendChild(infoTesters);
+    }
 
     const extraControls = document.createElement("div");
     infoDiv.appendChild(extraControls);
