@@ -6,6 +6,7 @@ var preloaded = [];
 var tabs = [];
 var tabPanels = [];
 var tabNavs = [];
+var currentTab = "";
 
 document.addEventListener("DOMContentLoaded", function() {
     var searchParams = new URLSearchParams(document.URL.split("?")[1]);
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then((resp) => {
                 var character = searchParams.get("character") || resp["default"];
+                currentTab = character;
                 var tabList = resp["list"];
                 var found = false;
                 for (var tab of tabList) {
@@ -71,6 +73,7 @@ function showTab(targetTab) {
         nav.hidden = true;
     }
     targetTabNav.hidden = false;
+    currentTab = tabName;
 }
 
 function createTab(tab, selected) {
@@ -262,7 +265,7 @@ async function setPlayed(board, e) {
         redirect: "follow",
         headers : {"Content-Type" : "text/plain"},
         body: JSON.stringify({
-            "character" : "Watcher",
+            "character" : currentTab,
             "board" : board,
             "used" : !e.target.checked
         })
