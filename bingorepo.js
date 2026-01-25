@@ -1,4 +1,4 @@
-const dbUrl = "https://script.google.com/macros/s/AKfycbxNxoFRdcLCUbvdwjiqKmkimu5TZ3Sj0oxj7a8mDFABiB0MFgo_P5n1KY4jUHu0X5iClg/exec";
+const dbUrl = "https://script.google.com/macros/s/AKfycbwQDEsHwfn0xU6ISAcrtT0W3dhnXPdNsjVd2h6ZbDCyRdWkVCzIXM1CZWDLn5LpnbYBfw/exec";
 const vistaUrl = "https://t3sl4co1l.github.io/bingovista/bingovista.html"
 var canvasSize = 0;
 
@@ -229,19 +229,31 @@ function displayBoardInfo(data) {
     shortLink.appendChild(linkIcon);
     extraControls.appendChild(shortLink);
 
-    const canvDiv = document.createElement("div");
-    canvDiv.id = data.name + "-canvas";
-    infoDiv.appendChild(canvDiv);
-    const infoCanvas = document.createElement("canvas");
-    infoCanvas.width = canvasSize;
-    infoCanvas.height = canvasSize;
-    infoCanvas.appendChild(document.createTextNode(data.string));
-    infoCanvas.addEventListener("click", onCanvasClicked);
-    canvDiv.appendChild(infoCanvas);
-    const cursDiv = document.createElement("div");
-    canvDiv.appendChild(cursDiv);
-    
-    bv.refreshBoard();
+    if (data.screenshot.startsWith("http")) {
+        // temporary solution while waiting for bingovista to be updated to Watcher
+        const crop = document.createElement("div");
+        crop.className = "crop";
+        infoDiv.appendChild(crop)
+        const boardScreenShot = document.createElement("img")
+        boardScreenShot.appendChild(document.createTextNode(data.string));
+        boardScreenShot.addEventListener("click", onCanvasClicked);
+        boardScreenShot.src = data.screenshot;
+        crop.appendChild(boardScreenShot);
+    } else {
+        const canvDiv = document.createElement("div");
+        canvDiv.id = data.name + "-canvas";
+        infoDiv.appendChild(canvDiv);
+        const infoCanvas = document.createElement("canvas");
+        infoCanvas.width = canvasSize;
+        infoCanvas.height = canvasSize;
+        infoCanvas.appendChild(document.createTextNode(data.string));
+        infoCanvas.addEventListener("click", onCanvasClicked);
+        canvDiv.appendChild(infoCanvas);
+        const cursDiv = document.createElement("div");
+        canvDiv.appendChild(cursDiv);
+        
+        bv.refreshBoard();
+    }
 }
 
 async function setPlayed(board, e) {

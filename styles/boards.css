@@ -43,8 +43,19 @@ body {
     flex-grow: 1;
 }
 
-.board-info canvas {
+.board-info canvas,
+.crop {
     cursor: copy;
     width: var(--canvas-size);
     height: var(--canvas-size);
+}
+
+.crop {
+    overflow: hidden;
+}
+
+.crop img {
+    width: calc(var(--canvas-size) * 2.7273);
+    height: calc(var(--canvas-size) * 1.5341);
+    margin: calc(var(--canvas-size) * -0.3651) 0 0 calc(var(--canvas-size) * -0.8636);
 }
