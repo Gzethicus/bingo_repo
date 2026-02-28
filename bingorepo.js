@@ -237,8 +237,24 @@ function displayBoardInfoCallback(data, bv) {
     shortLink.appendChild(linkIcon);
     extraControls.appendChild(shortLink);
 
+    const canvDiv = document.createElement("div");
+    canvDiv.id = data.name + "-canvas";
+    infoDiv.appendChild(canvDiv);
+    const infoCanvas = document.createElement("canvas");
+    infoCanvas.width = canvasSize;
+    infoCanvas.height = canvasSize;
+    infoCanvas.appendChild(document.createTextNode(data.string));
+    infoCanvas.addEventListener("click", onCanvasClicked);
+    canvDiv.appendChild(infoCanvas);
+    const cursDiv = document.createElement("div");
+    canvDiv.appendChild(cursDiv);
+    
+    bv.refreshBoard();
+
     if (data.screenshot.startsWith("http")) {
         // temporary solution while waiting for bingovista to be updated to Watcher
+        // nothing is as permanent as a temporary solution, it is now a feature to use screenshots or bv
+        canvDiv.className = "bv-canvas";
         const crop = document.createElement("div");
         crop.className = "crop";
         infoDiv.appendChild(crop)
@@ -248,19 +264,6 @@ function displayBoardInfoCallback(data, bv) {
         boardScreenShot.src = data.screenshot;
         crop.appendChild(boardScreenShot);
     } else {
-        const canvDiv = document.createElement("div");
-        canvDiv.id = data.name + "-canvas";
-        infoDiv.appendChild(canvDiv);
-        const infoCanvas = document.createElement("canvas");
-        infoCanvas.width = canvasSize;
-        infoCanvas.height = canvasSize;
-        infoCanvas.appendChild(document.createTextNode(data.string));
-        infoCanvas.addEventListener("click", onCanvasClicked);
-        canvDiv.appendChild(infoCanvas);
-        const cursDiv = document.createElement("div");
-        canvDiv.appendChild(cursDiv);
-        
-        bv.refreshBoard();
     }
 }
 
@@ -325,12 +328,44 @@ function togglePlayedVisibility(e) {
             if (visible)
                 rule.style.removeProperty("display");
             else
-                rule.style.display = "none"
+                rule.style.display = "none";
             break;
         }
     }
 }
 
+function toggleScreenshotVisibility(e) {
+    const visible = e.target.checked;
+    var styleSheet;
+    for (var i = 0; i < document.styleSheets.length; i++) {
+        var sheet = document.styleSheets[i];
+        if (sheet.href.includes("/boards.css")) {
+            styleSheet = sheet;
+            break;
+        }
+    }
+
+    var found = 0;
+    for (var i = 0; i < styleSheet.cssRules.length; i++) {
+        var rule = styleSheet.cssRules[i];
+        if (rule.selectorText === "div.bv-canvas") {
+            if (visible)
+                rule.style.removeProperty("display");
+            else
+                rule.style.display = "none";
+            found++;
+        }
+        if (rule.selectorText === "div.crop") {
+            if (visible)
+                rule.style.display = "none";
+            else
+                rule.style.removeProperty("display");
+            found++;
+        }
+        if (found >= 2)
+            break;
+    }
+}
 
 async function getShortLink(board, e) {
     const callback = confirmCopyToClipboard.bind(this, e);

@@ -43,6 +43,10 @@ body {
     flex-grow: 1;
 }
 
+div.bv-canvas {
+    display: none;
+}
+
 .board-info canvas,
 .crop {
     cursor: copy;
@@ -50,7 +54,7 @@ body {
     height: var(--canvas-size);
 }
 
-.crop {
+div.crop {
     overflow: hidden;
 }
 
