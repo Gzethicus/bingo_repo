@@ -157,6 +157,13 @@ function createBoardInfo(name, character) {
 }
 
 function displayBoardInfo(data) {
+    var bv = new Bingovista();
+	bv.loadModpack("bingovista/mods/watcher.json");
+    var successCallBack = displayBoardInfoCallback.bind(this, data, bv)
+    bv.setup({ dataSrc: data.string, dataType: "text", loadSuccess: successCallBack});
+}
+
+function displayBoardInfoCallback(data, bv) {
     const infoDiv = document.getElementById(data.name);
     const divLink = document.getElementById(data.name + "-link");
     if (data.used) {
@@ -167,13 +174,11 @@ function displayBoardInfo(data) {
         divLink.classList.remove("played");
     }
 
-    var bv = new Bingovista();
-    bv.setup({ dataSrc: data.string, dataType: "text" });
     bv.boardId = data.name + "-canvas";
     bv.board.comments = data.name;
     bv.board.perks = bv.maps.expflags.find((el) => el.name === "LOCKOUT").value;
 
-    bv.board.toBin = bv.boardToBin();
+    bv.boardToBin();
 
     const infoName = document.createElement("label");
     infoName.className = "board-name";
@@ -214,7 +219,7 @@ function displayBoardInfo(data) {
 
     const vistaLink = document.createElement("a");
     vistaLink.className = "icon-button";
-    vistaLink.href = vistaUrl + "?b=" + Bingovista.binToBase64u(bv.board.toBin);
+    vistaLink.href = vistaUrl + "?b=" + Bingovista.binToBase64u(bv.board.bin);
     vistaLink.target = "_blank";
     const vistaIcon = document.createElement("img");
     vistaIcon.src = "graphics\\bingoVista.png";
@@ -342,7 +347,7 @@ function makeRequest(board) {
     return fetch(
         new URL("https://www.seventransistorlabs.com/bserv/BingoServer.dll"), {
             method: "POST",
-            body: board.toBin,
+            body: board.bin,
             headers: {
                 "content-type": "application/octet-stream"
             }
